@@ -21,6 +21,15 @@ Fastapi babel is a tool what supports i18n, l10n, date and time locales and all 
     pip install fastapi-babel
 
 # How to use FastAPI Babel?
+
+First of all we have to extract, translate and compile the messages, so follow the steps.
+
+Notice: first of all you should create a babel config file **babel.cfg** in project root or where you want to run cli's.
+
+*babel.cfg*
+
+    [python: **.py]
+
 - Create main.py file:
 
 ```python
@@ -87,14 +96,6 @@ You have better to seperate a babel cli runner file beside of fastapi runner fil
 [========]
 
 ## Using FastAPI Babel in an API
-First of all we have to extract, translate and compile the messages, so follow the steps.
-
-Notice: first of all you should create a babel config file **babel.cfg** in project root or where you want to run cli's.
-
-*babel.cfg*
-
-    [python: **.py]
-
 
 - create file `babel.py` and write the code below.
 
