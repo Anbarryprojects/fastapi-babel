@@ -34,18 +34,18 @@ configs = BabelConfigs(
     BABEL_TRANSLATION_DIRECTORY="lang",
 )
 babel = Babel(configs=configs)
-
+    
 def main():
-	babel.locale = "en"
-	en_text = _("Hello World")
-	print(en_text)
-	
-	babel.locale = "fa"
-	fa_text = _("Hello World")
-	print(fa_text)
+    babel.locale = "en"
+    en_text = _("Hello World")
+    print(en_text)
+
+    babel.locale = "fa"
+    fa_text = _("Hello World")
+    print(fa_text)
 
 if __name__ == "__main__":
-	main()
+    main()
 ```
 
 - ### PyBabel Commands
@@ -152,8 +152,8 @@ Screenshot:
 
 
 ```xml
-    [python: **.py] 
-    extensions=jinja2.ext.autoescape,jinja2.ext.with_
+[python: **.py] 
+extensions=jinja2.ext.autoescape,jinja2.ext.with_
 ```
 
 
