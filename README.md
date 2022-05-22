@@ -208,3 +208,29 @@ async def read_item(request: Request, id: str):
 
 
 - Repeat all steps that we explained above for extracting messages, ...
+
+
+## Authors
+
+- [@Parsa Pourmhammad](https://github.com/Legopapurida)
+
+
+## Contributing
+
+Contributions are always welcome!
+
+See `contributing.md` for ways to get started.
+
+Please adhere to this project's `code of conduct`.
+
+
+## Feedback
+
+If you have any feedback, please reach out to us at parsapourmohammad@gmail.com
+
+
+## Support
+
+For support, email parsapourmohammad1999@gmail.com.
+
+
