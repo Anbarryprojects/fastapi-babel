@@ -154,6 +154,7 @@ Screenshot:
 
 ```xml
 [python: **.py] 
+[jinja2: **/templates/**.html]
 extensions=jinja2.ext.autoescape,jinja2.ext.with_
 ```
 
