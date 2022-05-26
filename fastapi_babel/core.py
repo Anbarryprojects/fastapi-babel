@@ -4,6 +4,8 @@ from gettext import translation
 from typing import Callable
 from subprocess import run
 from fastapi.templating import Jinja2Templates
+from fastapi import FastAPI
+from .middleware import InternationalizationMiddleware as Middleware
 from .properties import RootConfigs
 from .helpers import check_jinja_import
 from .helpers import check_click_import
@@ -13,7 +15,7 @@ class Babel:
 
     instance: Babel = None
 
-    def __init__(self, configs: RootConfigs) -> None:
+    def __init__(self, app: FastAPI = None, *, configs: RootConfigs) -> None:
         """`Babel` is manager for babel localization and i18n tools like gettext, translation, ...
 
         Args:
@@ -22,8 +24,10 @@ class Babel:
         Babel.instance = self
         self.config: RootConfigs = configs
         self.__locale: str = self.config.BABEL_DEFAULT_LOCALE
-        self.__domain: str = self.config.BABEL_DOMAIN.split('.')[0]
-        
+        self.__domain: str = self.config.BABEL_DOMAIN.split(".")[0]
+        if isinstance(app, FastAPI):
+            self.init_app(app)
+
     @property
     def domain(self) -> str:
         return self.__domain
@@ -48,10 +52,17 @@ class Babel:
             return gt.gettext
         return gettext
 
-    
+    def init_app(self, app: FastAPI) -> None:
+        """`Babel.init_app` is a helper function for using babel in FastAPI application.
+
+        Args:
+            app (FastAPI): FastAPI application object.
+        """
+        app.add_middleware(Middleware, babel=self)
+
     def install_jinja(self, templates: Jinja2Templates) -> None:
-        """`Babel.install_jinja` install gettext to jinja2 environment to access `_` in whole 
-        the jinja templates and let it to pybabel for extracting included messages throughout the 
+        """`Babel.install_jinja` install gettext to jinja2 environment to access `_` in whole
+        the jinja templates and let it to pybabel for extracting included messages throughout the
         templates.
 
         Args:
@@ -59,20 +70,20 @@ class Babel:
         """
         check_jinja_import()
         from jinja2 import Environment
+
         self.env: Environment = templates.env
         globals: dict = self.env.globals
-        globals.update(
-            {"_": _}
-        )
+        globals.update({"_": _})
 
     def run_cli(self):
-        """installs cli's for using pybabel commands easily by specified 
+        """installs cli's for using pybabel commands easily by specified
         configs from `BabelConfigs`.
         """
         check_click_import()
         babel_cli = BabelCli(self)
         babel_cli.run()
-        
+
+
 def make_gettext(message: str) -> str:
     """translate the message and retrieve message from .PO and .MO depends on
     `Babel.locale` locale.
@@ -85,7 +96,9 @@ def make_gettext(message: str) -> str:
     """
     return Babel.instance.gettext(message)
 
-_: Callable[[str], str] = make_gettext 
+
+_: Callable[[str], str] = make_gettext
+
 
 class BabelCli:
     __module_name__ = "pybabel"
@@ -166,14 +179,20 @@ class BabelCli:
         compile all messages from translation directory in .PO to .MO file and is
         a binnary text file.
         """
-        run([BabelCli.__module_name__, "compile", "-d", self.babel.config.BABEL_TRANSLATION_DIRECTORY])
+        run(
+            [
+                BabelCli.__module_name__,
+                "compile",
+                "-d",
+                self.babel.config.BABEL_TRANSLATION_DIRECTORY,
+            ]
+        )
 
-    
     def run(self):
         from click import group
         from click import option
         from click import echo
-        
+
         @group(
             "cmd",
             help="""
@@ -207,7 +226,6 @@ class BabelCli:
         def cmd():
             pass
 
-
         @cmd.command(
             "extract",
             help="""extract all messages that annotated using gettext/_
@@ -222,7 +240,6 @@ class BabelCli:
                 self.extract(dir)
             except Exception as err:
                 echo(err)
-
 
         @cmd.command(
             "init",
@@ -244,7 +261,6 @@ class BabelCli:
             except Exception as err:
                 echo(err)
 
-
         @cmd.command(
             "compile",
             help="""compile all messages from translation directory in .PO to .MO file and is
@@ -255,7 +271,6 @@ class BabelCli:
                 self.compile()
             except Exception as err:
                 echo(err)
-
 
         @cmd.command(
             "update",
