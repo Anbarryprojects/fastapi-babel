@@ -130,11 +130,10 @@ if __name__ == "__main__":
 ```python
 from fastapi import FastAPI, Request
 from fastapi_babel import _
-from fastapi_babel.middleware import InternationalizationMiddleware as I18nMiddleware
 from .babel import babel
 
 app = FastAPI()
-app.add_middleware(I18nMiddleware, babel=babel)
+babel.init_app(app)
 
 @app.get("/items/{id}", response_class=HTMLResponse)
 async def read_item(request: Request, id: str):
@@ -167,7 +166,6 @@ from fastapi import FastAPI, Request
 from fastapi_babel import Babel
 from fastapi_babel import BabelConfigs
 from fastapi_babel import _
-from fastapi_babel.middleware import InternationalizationMiddleware as I18nMiddleware
 
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
@@ -179,11 +177,9 @@ configs = BabelConfigs(
     BABEL_DEFAULT_LOCALE="en",
     BABEL_TRANSLATION_DIRECTORY="lang",
 )
-babel = Babel(configs=configs)
-babel.install_jinja(templates)
 
 app = FastAPI()
-app.add_middleware(I18nMiddleware, babel=babel)
+babel = Babel(app, configs=configs)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/items/{id}", response_class=HTMLResponse)
