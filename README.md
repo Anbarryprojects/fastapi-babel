@@ -2,7 +2,9 @@
 
 
 # FastAPI BABEL
-Fastapi babel is a tool what supports i18n, l10n, date and time locales and all pybabel functionalities easily that integrated with fastapi framework.
+### Get [pybabbel](https://github.com/python-babel/babel) tools directly within your FastAPI project without hassle.
+
+FastAPI Babel is will be integrated within FastAPI framework and gives you support of i18n, l10n, date and time locales and all other pybabel functionalities.
 
 ## Features:
 - **I18n** (Internationalization)
@@ -13,7 +15,7 @@ Fastapi babel is a tool what supports i18n, l10n, date and time locales and all 
 - locale selector from **http header**
 
 ## Support
-**Python:** 3.6 and later (tested against 3.6, 3.7, 3.8 and 3.9)
+**Python:** 3.6 and later (tested on Python 3.6, 3.7, 3.8, and 3.9)
 **FastAPI**: 0.45.0 +
 **PyBabel**: All
 
@@ -217,9 +219,9 @@ async def read_item(request: Request, id: str):
 
 Contributions are always welcome!
 
-See `contributing.md` for ways to get started.
+Please read `contributing.md` to get familiar how to get started.
 
-Please adhere to this project's `code of conduct`.
+Please adhere to the project's `code of conduct`.
 
 
 ## Feedback
