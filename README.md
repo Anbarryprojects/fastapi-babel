@@ -1,4 +1,8 @@
-![](https://user-images.githubusercontent.com/56755478/165474515-12392df4-a41c-4ed9-bed4-512f606caedc.png)
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/56755478/165474515-12392df4-a41c-4ed9-bed4-512f606caedc.png" />
+</p>
+
+
 
 
 # FastAPI BABEL
