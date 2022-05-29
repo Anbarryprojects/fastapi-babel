@@ -30,13 +30,13 @@ FastAPI Babel is will be integrated within FastAPI framework and gives you suppo
 
 First of all we have to extract, translate and compile the messages, so follow the steps.
 
-Notice: first of all you should create a babel config file **babel.cfg** in project root or where you want to run cli's.
+1. make a **babel.cfg** file in project root directory or in the directory where you want to run CLI.
 
 *babel.cfg*
 
     [python: **.py]
 
-- Create main.py file:
+2. Create main.py file:
 
 ```python
 from fastapi_babel import Babel
@@ -63,23 +63,22 @@ if __name__ == "__main__":
     main()
 ```
 
-- ### PyBabel Commands
-1. extracting
+3. do the extracting
 `pybabel extract -F babel.cfg -o messages.pot .`
 
-2. initializing
+4. initialize pybabble
 `pybabel init -i messages.pot -d lang -l fa`
 
-3. Goto *lang/fa/LC_MESSAGES/messages.po* and add your translation to your messages.
+5. Goto *lang/fa/LC_MESSAGES/messages.po* and add your translation to your messages.
 
-4. compiling
+6. compiling
 `pybabel compile -d lang`
 
 - ### FastAPI Babel Commands
 Install click at first:
 `pip install click`
 
-Add this snippet to your code:
+??? Add this snippet to your code:
 
 ```python
 ...
@@ -87,16 +86,14 @@ babel.run_cli()
 ...
 ```
 Now you can follow those part of mentioned above for message extracting process.
-**For more information your can check helpers of babel cli:
-**
+**For more information please check the help flag of babel cli:**
+
 `python main.py --help`
 
 #### Why FastAPI Babel Cli is recommanded ?
 when you are creating application in a production level where you will deploy it on a server you may not found the right directory and paths of babel domain and config files, but FastAPI Babel Cli will do it perfectly without any concern about that. you only need to specify **domain name**, **babel.cfg** and** localization directory **.
 
-**NOTICE:** you never use it beside of fastapi runner file line `main.py` or `run.py`, because uvicorn cli will not work anymore.
-
-You have better to seperate a babel cli runner file beside of fastapi runner file, by the way you will not overwhelm with failure at uvicorn cli.
+**NOTICE:** Do **not** use `FastAPI Babbel` beside fastapi runner files (`main.py` or `run.py`), as uvicorn cli will not work anymore.
 
 
 [========]
@@ -123,13 +120,14 @@ if __name__ == "__main__":
 
 `python3 babel.py extract -d/--dir {watch_dir}`
 
-**Notice: ** watch_dir can be your project directory or messages you want to extract that.
+**Notice: ** watch_dir can be your project directory or directory where you want to extract messages into that.
 
-- add your own langauge locale directory such as fa by following commands.
+- add your own langauge locale directory such as `fa` by following commands.
 
 `python3 babel.py init -l fa`
 
 - go to ./lang/Fa/.po and add your translations.
+
 - compile all locale directorties.
 `python3 babel.py compile`
 
@@ -211,7 +209,7 @@ async def read_item(request: Request, id: str):
 ```
 
 
-- Repeat all steps that we explained above for extracting messages, ...
+- just perform the steps that we explained above for extracting messages, ...
 
 
 ## Authors
