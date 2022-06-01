@@ -26,17 +26,40 @@ FastAPI Babel is will be integrated within FastAPI framework and gives you suppo
 ## Installation
     pip install fastapi-babel
 
-# How to use FastAPI Babel?
+# How to use
 
-First of all we have to extract, translate and compile the messages, so follow the steps.
+1. install FastAPI and FastAPI Babel:
 
-1. make a **babel.cfg** file in project root directory or in the directory where you want to run CLI.
+`pip install fastapi`
+
+and
+`pip install fastapi_babel`
+
+2. make `babel.py` file:
+
+```python
+from fastapi_babel import Babel
+from fastapi_babel import BabelConfigs
+
+configs = BabelConfigs(
+    ROOT_DIR=__file__,
+    BABEL_DEFAULT_LOCALE="en",
+    BABEL_TRANSLATION_DIRECTORY="lang",
+)
+babel = Babel(configs=configs)
+
+if __name__ == "__main__":
+    babel.run_cli()
+```
+
+3. make `babel.cfg` file
 
 *babel.cfg*
 
     [python: **.py]
 
-2. Create main.py file:
+
+4. Create main.py file:
 
 ```python
 from fastapi_babel import Babel
@@ -63,16 +86,18 @@ if __name__ == "__main__":
     main()
 ```
 
-3. do the extracting
+5. Extract the massage
 `pybabel extract -F babel.cfg -o messages.pot .`
 
-4. initialize pybabble
+6. Initialize pybabble
 `pybabel init -i messages.pot -d lang -l fa`
 
-5. Goto *lang/fa/LC_MESSAGES/messages.po* and add your translation to your messages.
+7. Goto *lang/**YOUR_lANGUAGE**/LC_MESSAGES/messages.po* and add your translation to your messages.
 
-6. compiling
+8. compile
 `pybabel compile -d lang`
+
+9. enjoy 
 
 - ### FastAPI Babel Commands
 Install click at first:
