@@ -1,8 +1,14 @@
-![](https://user-images.githubusercontent.com/56755478/165474515-12392df4-a41c-4ed9-bed4-512f606caedc.png)
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/56755478/165474515-12392df4-a41c-4ed9-bed4-512f606caedc.png" />
+</p>
+
+
 
 
 # FastAPI BABEL
-Fastapi babel is a tool what supports i18n, l10n, date and time locales and all pybabel functionalities easily that integrated with fastapi framework.
+### Get [pybabbel](https://github.com/python-babel/babel) tools directly within your FastAPI project without hassle.
+
+FastAPI Babel is will be integrated within FastAPI framework and gives you support of i18n, l10n, date and time locales and all other pybabel functionalities.
 
 ## Features:
 - **I18n** (Internationalization)
@@ -13,24 +19,48 @@ Fastapi babel is a tool what supports i18n, l10n, date and time locales and all 
 - locale selector from **http header**
 
 ## Support
-**Python:** 3.6 and later (tested against 3.6, 3.7, 3.8 and 3.9)
+**Python:** 3.6 and later (tested on Python 3.6, 3.7, 3.8, and 3.9)
 **FastAPI**: 0.45.0 +
 **PyBabel**: All
 
 ## Installation
     pip install fastapi-babel
 
-# How to use FastAPI Babel?
+# How to use
 
-First of all we have to extract, translate and compile the messages, so follow the steps.
+1. install FastAPI and FastAPI Babel:
 
-Notice: first of all you should create a babel config file **babel.cfg** in project root or where you want to run cli's.
+`pip install fastapi`
+
+and
+
+`pip install fastapi_babel`
+
+2. make `babel.py` file:
+
+```python
+from fastapi_babel import Babel
+from fastapi_babel import BabelConfigs
+
+configs = BabelConfigs(
+    ROOT_DIR=__file__,
+    BABEL_DEFAULT_LOCALE="en",
+    BABEL_TRANSLATION_DIRECTORY="lang",
+)
+babel = Babel(configs=configs)
+
+if __name__ == "__main__":
+    babel.run_cli()
+```
+
+3. make `babel.cfg` file 
 
 *babel.cfg*
 
     [python: **.py]
 
-- Create main.py file:
+
+4. Create main.py file:
 
 ```python
 from fastapi_babel import Babel
@@ -57,40 +87,46 @@ if __name__ == "__main__":
     main()
 ```
 
-- ### PyBabel Commands
-1. extracting
+5. Extract the massage <a name="step5"></a>
+
 `pybabel extract -F babel.cfg -o messages.pot .`
 
-2. initializing
+6. Initialize pybabble
+
 `pybabel init -i messages.pot -d lang -l fa`
 
-3. Goto *lang/fa/LC_MESSAGES/messages.po* and add your translation to your messages.
+7. Goto *lang/**YOUR_LANGUAGE_CODE**/LC_MESSAGES/messages.po* and **add your translation** to your messages.
 
-4. compiling
+8. Go back to the root folder and   Compile
+
 `pybabel compile -d lang`
+
+9. Run `main.py`
+
+`python3 main.py`
+
+10. Enjoy 
 
 - ### FastAPI Babel Commands
 Install click at first:
 `pip install click`
 
-Add this snippet to your code:
+1. Add this snippet to your FasAPI code:
 
 ```python
 ...
 babel.run_cli()
 ...
 ```
-Now you can follow those part of mentioned above for message extracting process.
-**For more information your can check helpers of babel cli:
-**
+2. Now just follow the documentation from [step 5](#step5).  
+
+For more information just take a look at help flag of `main.py`
 `python main.py --help`
 
-#### Why FastAPI Babel Cli is recommanded ?
-when you are creating application in a production level where you will deploy it on a server you may not found the right directory and paths of babel domain and config files, but FastAPI Babel Cli will do it perfectly without any concern about that. you only need to specify **domain name**, **babel.cfg** and** localization directory **.
+#### Why FastAPI Babel CLI is recommanded ?
+FastAPI Babel CLI will eliminate the need of concering the directories and paths, so you can concentrate on the project and spend less time on going forward and backward. You only need to specify **domain name**, **babel.cfg** and** localization directory **.
 
-**NOTICE:** you never use it beside of fastapi runner file line `main.py` or `run.py`, because uvicorn cli will not work anymore.
-
-You have better to seperate a babel cli runner file beside of fastapi runner file, by the way you will not overwhelm with failure at uvicorn cli.
+**NOTICE:** Do **not** use `FastAPI Babbel` beside fastapi runner files (`main.py` or `run.py`), as uvicorn cli will not work.
 
 
 [========]
@@ -113,18 +149,19 @@ babel = Babel(configs=configs)
 if __name__ == "__main__":
     babel.run_cli()
 ```
-- extract messages with following command
+1. Extract messages with following command
 
 `python3 babel.py extract -d/--dir {watch_dir}`
 
-**Notice: ** watch_dir can be your project directory or messages you want to extract that.
+**Notice: ** watch_dir is your project root directory, or where you want to extract the messages into that directory.
 
-- add your own langauge locale directory such as fa by following commands.
+2. add your own langauge locale directory, for instance `fa`.
 
 `python3 babel.py init -l fa`
 
-- go to ./lang/Fa/.po and add your translations.
-- compile all locale directorties.
+3. go to ./lang/Fa/.po and add your translations.
+
+4. compile all locale directorties.
 `python3 babel.py compile`
 
 ```python
@@ -141,14 +178,14 @@ async def read_item(request: Request, id: str):
 
 ```
 
-- Now you can control your translation langauge from header of request and locale code. the meant locale header param is **Accept-Laguage **.
+5. Now you can control your translation langauge from header of request and locale code. The parameter is `Accept-Laguage`.
 
 Screenshot:
 [![Screenshot 1](https://user-images.githubusercontent.com/56755478/169701538-8f893d0e-fd09-4004-8e8d-5e045a1d588a.png "Screenshot 1")](https://user-images.githubusercontent.com/56755478/169701538-8f893d0e-fd09-4004-8e8d-5e045a1d588a.png "Screenshot 1")
 
 ### How to use Jinja In FastAPI Babel
 
-- Add jinja extension to **babel.cfg**
+1. Add jinja extension to **babel.cfg**
 
 
 ```xml
@@ -156,6 +193,8 @@ Screenshot:
 [jinja2: **/templates/**.html]
 extensions=jinja2.ext.autoescape,jinja2.ext.with_
 ```
+
+2. Here is how your `main.py` should look like.
 
 
 *main.py*
@@ -186,6 +225,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 async def read_item(request: Request, id: str):
     return templates.TemplateResponse("item.html", {"request": request, "id": id})
 ```
+3. Here is sample `index.html` file
 
 *index.html*
 
@@ -205,7 +245,7 @@ async def read_item(request: Request, id: str):
 ```
 
 
-- Repeat all steps that we explained above for extracting messages, ...
+4. Now just follow the documentation from [step 5](#step5). 
 
 
 ## Authors
@@ -217,18 +257,11 @@ async def read_item(request: Request, id: str):
 
 Contributions are always welcome!
 
-See `contributing.md` for ways to get started.
+Please read `contributing.md` to get familiar how to get started.
 
-Please adhere to this project's `code of conduct`.
-
-
-## Feedback
-
-If you have any feedback, please reach out to us at parsapourmohammad@gmail.com
+Please adhere to the project's `code of conduct`.
 
 
-## Support
+## Feedback And Support
 
-For support, email parsapourmohammad1999@gmail.com.
-
-
+Please open an issue and follow the template, so the community can help you.
