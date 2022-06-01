@@ -53,7 +53,7 @@ if __name__ == "__main__":
     babel.run_cli()
 ```
 
-3. make `babel.cfg` file
+3. make `babel.cfg` file 
 
 *babel.cfg*
 
@@ -87,7 +87,7 @@ if __name__ == "__main__":
     main()
 ```
 
-5. Extract the massage
+5. Extract the massage <a name="step5"></a>
 
 `pybabel extract -F babel.cfg -o messages.pot .`
 
@@ -111,22 +111,22 @@ if __name__ == "__main__":
 Install click at first:
 `pip install click`
 
-??? Add this snippet to your code:
+1. Add this snippet to your FasAPI code:
 
 ```python
 ...
 babel.run_cli()
 ...
 ```
-Now you can follow those part of mentioned above for message extracting process.
-**For more information please check the help flag of babel cli:**
+2. Now just follow the documentation from [step 5](#step5).  
 
+For more information just take a look at help flag of `main.py`
 `python main.py --help`
 
-#### Why FastAPI Babel Cli is recommanded ?
-when you are creating application in a production level where you will deploy it on a server you may not found the right directory and paths of babel domain and config files, but FastAPI Babel Cli will do it perfectly without any concern about that. you only need to specify **domain name**, **babel.cfg** and** localization directory **.
+#### Why FastAPI Babel CLI is recommanded ?
+FastAPI Babel CLI will eliminate the need of concering the directories and paths, so you can concentrate on the project and spend less time on going forward and backward. You only need to specify **domain name**, **babel.cfg** and** localization directory **.
 
-**NOTICE:** Do **not** use `FastAPI Babbel` beside fastapi runner files (`main.py` or `run.py`), as uvicorn cli will not work anymore.
+**NOTICE:** Do **not** use `FastAPI Babbel` beside fastapi runner files (`main.py` or `run.py`), as uvicorn cli will not work.
 
 
 [========]
@@ -149,19 +149,19 @@ babel = Babel(configs=configs)
 if __name__ == "__main__":
     babel.run_cli()
 ```
-- extract messages with following command
+1. Extract messages with following command
 
 `python3 babel.py extract -d/--dir {watch_dir}`
 
-**Notice: ** watch_dir can be your project directory or directory where you want to extract messages into that.
+**Notice: ** watch_dir is your project root directory, or where you want to extract the messages into that directory.
 
-- add your own langauge locale directory such as `fa` by following commands.
+2. add your own langauge locale directory, for instance `fa`.
 
 `python3 babel.py init -l fa`
 
-- go to ./lang/Fa/.po and add your translations.
+3. go to ./lang/Fa/.po and add your translations.
 
-- compile all locale directorties.
+4. compile all locale directorties.
 `python3 babel.py compile`
 
 ```python
@@ -178,14 +178,14 @@ async def read_item(request: Request, id: str):
 
 ```
 
-- Now you can control your translation langauge from header of request and locale code. the meant locale header param is **Accept-Laguage **.
+5. Now you can control your translation langauge from header of request and locale code. The parameter is `Accept-Laguage`.
 
 Screenshot:
 [![Screenshot 1](https://user-images.githubusercontent.com/56755478/169701538-8f893d0e-fd09-4004-8e8d-5e045a1d588a.png "Screenshot 1")](https://user-images.githubusercontent.com/56755478/169701538-8f893d0e-fd09-4004-8e8d-5e045a1d588a.png "Screenshot 1")
 
 ### How to use Jinja In FastAPI Babel
 
-- Add jinja extension to **babel.cfg**
+1. Add jinja extension to **babel.cfg**
 
 
 ```xml
@@ -193,6 +193,8 @@ Screenshot:
 [jinja2: **/templates/**.html]
 extensions=jinja2.ext.autoescape,jinja2.ext.with_
 ```
+
+2. Here is how your `main.py` should look like.
 
 
 *main.py*
@@ -223,6 +225,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 async def read_item(request: Request, id: str):
     return templates.TemplateResponse("item.html", {"request": request, "id": id})
 ```
+3. Here is sample `index.html` file
 
 *index.html*
 
@@ -242,7 +245,7 @@ async def read_item(request: Request, id: str):
 ```
 
 
-- just perform the steps that we explained above for extracting messages, ...
+4. Now just follow the documentation from [step 5](#step5). 
 
 
 ## Authors
@@ -259,13 +262,6 @@ Please read `contributing.md` to get familiar how to get started.
 Please adhere to the project's `code of conduct`.
 
 
-## Feedback
+## Feedback And Support
 
-If you have any feedback, please reach out to us at parsapourmohammad@gmail.com
-
-
-## Support
-
-For support, email parsapourmohammad1999@gmail.com.
-
-
+Please open an issue and follow the template, so the community can help you.
