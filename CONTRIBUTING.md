@@ -21,7 +21,7 @@ Set up your dev environment:
 - Create a `virtualenv` first:
     - `python -m virtualenv .venv`
 - Activate the `virtualenv`:
-    - `./venv/bin/activate`
+    - `source ./venv/bin/activate`
 - Install the dev requirements:
     - `pip install -r requirements-dev.txt`
 
