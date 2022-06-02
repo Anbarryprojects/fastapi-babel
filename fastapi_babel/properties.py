@@ -1,7 +1,6 @@
 import os
-from dataclasses import dataclass
-from dataclasses import field
 import pathlib
+from dataclasses import dataclass, field
 
 
 @dataclass
@@ -16,6 +15,8 @@ class RootConfigs:
 
     def __post_init__(self):
         self.ROOT_DIR = pathlib.Path(self.ROOT_DIR).parent
-        self.BABEL_TRANSLATION_DIRECTORY = os.path.join(self.ROOT_DIR, self.BABEL_TRANSLATION_DIRECTORY)
+        self.BABEL_TRANSLATION_DIRECTORY = os.path.join(
+            self.ROOT_DIR, self.BABEL_TRANSLATION_DIRECTORY
+        )
         self.BABEL_CONFIG_FILE = os.path.join(self.ROOT_DIR, self.BABEL_CONFIG_FILE)
         self.BABEL_MESSAGE_POT_FILE = os.path.join(self.ROOT_DIR, self.BABEL_DOMAIN)

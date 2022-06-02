@@ -1,14 +1,15 @@
 from __future__ import annotations
-from gettext import gettext
-from gettext import translation
-from typing import Callable
+
+from gettext import gettext, translation
 from subprocess import run
-from fastapi.templating import Jinja2Templates
+from typing import Callable
+
 from fastapi import FastAPI
+from fastapi.templating import Jinja2Templates
+
+from .helpers import check_click_import, check_jinja_import
 from .middleware import InternationalizationMiddleware as Middleware
 from .properties import RootConfigs
-from .helpers import check_jinja_import
-from .helpers import check_click_import
 
 
 class Babel:
@@ -16,7 +17,9 @@ class Babel:
     instance: Babel = None
 
     def __init__(self, app: FastAPI = None, *, configs: RootConfigs) -> None:
-        """`Babel` is manager for babel localization and i18n tools like gettext, translation, ...
+        """
+        `Babel` is manager for babel localization
+            and i18n tools like gettext, translation, ...
 
         Args:
             configs (RootConfigs): Babel configs for using.
@@ -61,9 +64,11 @@ class Babel:
         app.add_middleware(Middleware, babel=self)
 
     def install_jinja(self, templates: Jinja2Templates) -> None:
-        """`Babel.install_jinja` install gettext to jinja2 environment to access `_` in whole
-        the jinja templates and let it to pybabel for extracting included messages throughout the
-        templates.
+        """
+        `Babel.install_jinja` install gettext to jinja2 environment
+            to access `_` in whole
+            the jinja templates and let it to pybabel for
+            extracting included messages throughout the templates.
 
         Args:
             templates (Jinja2Templates): Starlette Jinja2Templates object.
@@ -189,17 +194,15 @@ class BabelCli:
         )
 
     def run(self):
-        from click import group
-        from click import option
-        from click import echo
+        from click import echo, group, option
 
         @group(
             "cmd",
             help="""
             First Step to extracting messages:\n
 
-                1- extract -d/--dir {watch_dir}\n 
-                2- init -l/--lang {lang}\n 
+                1- extract -d/--dir {watch_dir}\n
+                2- init -l/--lang {lang}\n
                 3- add your custome translation to your lang `.po` file for example FA dir {./lang/fa}. \n
                 4- compile.\n
 
@@ -221,7 +224,7 @@ class BabelCli:
                     2- update -d lang\n
                     3- go to ./lang/Fa/.po and add your translations.\n
                     4- compile\n
-        """,
+        """,  # noqa
         )
         def cmd():
             pass

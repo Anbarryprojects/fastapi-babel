@@ -1,13 +1,10 @@
 from fastapi import FastAPI, Request
-
-from fastapi_babel import Babel
-from fastapi_babel import BabelConfigs
-from fastapi_babel import _
-from fastapi_babel.middleware import InternationalizationMiddleware as I18nMiddleware
-
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+
+from fastapi_babel import _  # noqa
+from fastapi_babel import Babel, BabelConfigs
 
 templates = Jinja2Templates(directory="templates")
 configs = BabelConfigs(
