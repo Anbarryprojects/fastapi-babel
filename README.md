@@ -53,7 +53,7 @@ if __name__ == "__main__":
     babel.run_cli()
 ```
 
-3. make `babel.cfg` file 
+3. make `babel.cfg` file
 
 *babel.cfg*
 
@@ -73,7 +73,7 @@ configs = BabelConfigs(
     BABEL_TRANSLATION_DIRECTORY="lang",
 )
 babel = Babel(configs=configs)
-    
+
 def main():
     babel.locale = "en"
     en_text = _("Hello World")
@@ -105,7 +105,7 @@ if __name__ == "__main__":
 
 `python3 main.py`
 
-10. Enjoy 
+10. Enjoy
 
 - ### FastAPI Babel Commands
 Install click at first:
@@ -118,7 +118,7 @@ Install click at first:
 babel.run_cli()
 ...
 ```
-2. Now just follow the documentation from [step 5](#step5).  
+2. Now just follow the documentation from [step 5](#step5).
 
 For more information just take a look at help flag of `main.py`
 `python main.py --help`
@@ -189,7 +189,7 @@ Screenshot:
 
 
 ```xml
-[python: **.py] 
+[python: **.py]
 [jinja2: **/templates/**.html]
 extensions=jinja2.ext.autoescape,jinja2.ext.with_
 ```
@@ -245,7 +245,7 @@ async def read_item(request: Request, id: str):
 ```
 
 
-4. Now just follow the documentation from [step 5](#step5). 
+4. Now just follow the documentation from [step 5](#step5).
 
 
 ## Authors

@@ -21,4 +21,3 @@ msgstr ""
 #: examples/test1/main.py:22
 msgid "Hello World"
 msgstr "سلام دنیا"
-
