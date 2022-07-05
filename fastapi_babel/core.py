@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from gettext import gettext, translation
 from subprocess import run
-from typing import Callable
+from typing import Callable, Optional
 
 from fastapi import FastAPI
 from fastapi.templating import Jinja2Templates
@@ -14,9 +14,9 @@ from .properties import RootConfigs
 
 class Babel:
 
-    instance: Babel = None
+    instance: Optional[Babel] = None
 
-    def __init__(self, app: FastAPI = None, *, configs: RootConfigs) -> None:
+    def __init__(self, app: Optional[FastAPI] = None, *, configs: RootConfigs) -> None:
         """
         `Babel` is manager for babel localization
             and i18n tools like gettext, translation, ...
@@ -27,6 +27,7 @@ class Babel:
         Babel.instance = self
         self.config: RootConfigs = configs
         self.__locale: str = self.config.BABEL_DEFAULT_LOCALE
+        self.__d_locale: str = self.config.BABEL_DEFAULT_LOCALE
         self.__domain: str = self.config.BABEL_DOMAIN.split(".")[0]
         if isinstance(app, FastAPI):
             self.init_app(app)
@@ -40,12 +41,12 @@ class Babel:
         return self.__locale
 
     @locale.setter
-    def locale(self, value) -> None:
+    def locale(self, value: str) -> None:
         self.__locale = value
 
     @property
     def gettext(self) -> gettext:
-        if self.locale == "fa":
+        if self.__d_locale != self.locale:
             gt = translation(
                 self.domain,
                 self.config.BABEL_TRANSLATION_DIRECTORY,

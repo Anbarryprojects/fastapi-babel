@@ -1,24 +1,16 @@
-from fastapi import FastAPI, Request
-
-from fastapi_babel import Babel
-from fastapi_babel import BabelConfigs
-from fastapi_babel import _
-
-
-configs = BabelConfigs(
-    ROOT_DIR=__file__,
-    BABEL_DEFAULT_LOCALE="en",
-    BABEL_TRANSLATION_DIRECTORY="lang",
-)
-
-app = FastAPI()
-babel = Babel(app, configs=configs)
-
-
-@app.get("/items/{id}")
-async def read_item(request: Request, id: str):
-    return {
-        "id": id,
-        "message": _("Hello World"),
-        "locale": request.headers.get("Accept-Language"),
-    }
+from _babel import _ 
+from _babel import babel
+ 
+if __name__ == "__main__":
+    babel.locale = "en"
+    en_text = _("File not found. There is nothing here")
+    print(en_text)
+    babel.locale = "fa"
+    fa_text = _("File not found. There is nothing here")
+    print(fa_text)
+    babel.locale = "fr"
+    fr_text = _("File not found. There is nothing here")
+    print(fr_text)
+    babel.locale = "es"
+    es_text = _("File not found. There is nothing here")
+    print(es_text)
