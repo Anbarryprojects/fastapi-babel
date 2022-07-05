@@ -10,7 +10,7 @@ from fastapi.templating import Jinja2Templates
 from .helpers import check_click_import, check_jinja_import
 from .middleware import InternationalizationMiddleware as Middleware
 from .properties import RootConfigs
-
+from .exceptions import BabelProxyError
 
 class Babel:
 
@@ -100,6 +100,8 @@ def make_gettext(message: str) -> str:
     Returns:
         str: transalted message.
     """
+    if Babel.instance is None:
+        raise BabelProxyError()
     return Babel.instance.gettext(message)
 
 
