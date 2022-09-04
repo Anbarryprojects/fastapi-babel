@@ -12,6 +12,7 @@ FastAPI Babel is will be integrated within FastAPI framework and gives you suppo
 
 ## Features:
 - **I18n** (Internationalization)
+- **Wtform Translation** (Lazy Text)
 - **l10n** (Localization)
 - **Date and time** locale
 - **Decimal, Number** locale
@@ -242,11 +243,11 @@ async def read_item(request: Request, id: str):
     <h1>{{_("Hello World")}}</h1>
 </body>
 </html>
-```
-
+``` 
 
 4. Now just follow the documentation from [step 5](#step5).
 
+5. More features like lazy gettext, please check the [Wtform Example](https://github.com/Anbarryprojects/fastapi-babel/tree/main/examples/wtforms)
 
 ## Authors
 
