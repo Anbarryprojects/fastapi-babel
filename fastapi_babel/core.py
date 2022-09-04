@@ -12,6 +12,7 @@ from .middleware import InternationalizationMiddleware as Middleware
 from .properties import RootConfigs
 from .exceptions import BabelProxyError
 
+
 class Babel:
 
     instance: Optional[Babel] = None
@@ -90,6 +91,14 @@ class Babel:
         babel_cli.run()
 
 
+class __LazyText:
+    def __init__(self, message) -> None:
+        self.message = message
+
+    def __repr__(self) -> str:
+        return _(self.message)
+
+
 def make_gettext(message: str) -> str:
     """translate the message and retrieve message from .PO and .MO depends on
     `Babel.locale` locale.
@@ -106,6 +115,7 @@ def make_gettext(message: str) -> str:
 
 
 _: Callable[[str], str] = make_gettext
+lazy_gettext = __LazyText
 
 
 class BabelCli:

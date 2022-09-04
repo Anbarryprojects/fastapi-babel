@@ -3,7 +3,6 @@ from fastapi import Request
 from i18n import babel, _
 from app import Application as root
 from forms import RegistrationForm
-from gettext import find
 
 router = APIRouter(prefix="")
 render = root.templates.TemplateResponse
