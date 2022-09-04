@@ -220,6 +220,7 @@ configs = BabelConfigs(
 
 app = FastAPI()
 babel = Babel(app, configs=configs)
+babel.install_jinja(templates)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/items/{id}", response_class=HTMLResponse)
