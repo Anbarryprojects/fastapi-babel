@@ -4,21 +4,19 @@ from i18n import babel, _
 from app import Application as root
 from forms import RegistrationForm
 
-router = APIRouter(prefix="")
+router: APIRouter = APIRouter(prefix="")
 render = root.templates.TemplateResponse
 
 
 @router.get("/")
 async def read_item(request: Request):
     form = RegistrationForm()
-    babel.locale = "fa"
     return render("index.html", {"request": request, "form": form})
 
 
 @router.post("/")
-async def read_item(request: Request):
+async def send_item(request: Request):
     form = RegistrationForm(await request.form())
-    babel.locale = "fa"
     if form.validate():
         return render("index.html", {"request": request, "form": form})
     return form.errors

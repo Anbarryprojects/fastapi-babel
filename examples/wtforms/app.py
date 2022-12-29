@@ -1,15 +1,16 @@
+from typing import Type
 from fastapi import FastAPI
 from fastapi.templating import Jinja2Templates
 from i18n import babel
 
 
 class Application:
-    app: FastAPI = None
-    templates: Jinja2Templates = None
+    app: FastAPI
+    templates: Jinja2Templates
 
 
 def create_app() -> FastAPI:
-    root = Application
+    root: Type[Application] = Application
     root.app = FastAPI()
     root.templates = Jinja2Templates(directory="templates")
     babel.init_app(app=root.app)

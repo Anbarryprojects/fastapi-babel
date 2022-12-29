@@ -3,7 +3,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.middleware.base import RequestResponseEndpoint
 from starlette.middleware.base import DispatchFunction
 from starlette.types import ASGIApp
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from .core import Babel
@@ -11,7 +11,10 @@ if TYPE_CHECKING:
 
 class InternationalizationMiddleware(BaseHTTPMiddleware):
     def __init__(
-        self, app: ASGIApp, babel: "Babel", dispatch: DispatchFunction = None
+        self,
+        app: ASGIApp,
+        babel: "Babel",
+        dispatch: Optional[DispatchFunction] = None,
     ) -> None:
         super().__init__(app, dispatch)
         self.babel: "Babel" = babel
@@ -28,8 +31,8 @@ class InternationalizationMiddleware(BaseHTTPMiddleware):
         Returns:
             Response: ...
         """
-        lang_code: str = request.headers.get("Accept-Language", None)
+        lang_code: Optional[str] = request.headers.get("Accept-Language", None)
         if lang_code:
-            self.babel.locale = lang_code
-        response = await call_next(request)
+            self.babel.locale = lang_code.split(",")[0]
+        response: Response = await call_next(request)
         return response

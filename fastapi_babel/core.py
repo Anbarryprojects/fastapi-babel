@@ -46,7 +46,7 @@ class Babel:
         self.__locale = value
 
     @property
-    def gettext(self) -> gettext:
+    def gettext(self) -> Callable[[str], str]:
         if self.__d_locale != self.locale:
             gt = translation(
                 self.domain,
@@ -152,7 +152,7 @@ class BabelCli:
             ]
         )
 
-    def init(self, lang: str) -> None:
+    def init(self, lang: Optional[str] = None) -> None:
         """Initialized lacale directory for first time.
         if there is already exists the directory, notice that your
         all comiled and initialized messages will remove, in this
@@ -174,7 +174,7 @@ class BabelCli:
             ]
         )
 
-    def update(self, watch_dir: str) -> None:
+    def update(self, watch_dir: Optional[str] = None) -> None:
         """update the extracted messages after init command/initialized directory
         , Default is `./lang`"
 
@@ -271,7 +271,7 @@ class BabelCli:
             help="locale directory name and path, default is fa",
             default="fa",
         )
-        def init(lang=None):
+        def init(lang: Optional[str] = None):
             try:
                 self.init(lang)
             except Exception as err:
@@ -294,7 +294,7 @@ class BabelCli:
                 , Default is `./lang`""",
         )
         @option("-d", "--dir", "dir", help="locale directory name and path")
-        def update(dir=None):
+        def update(dir: Optional[str] = None):
             try:
                 self.update(dir)
             except Exception as err:
