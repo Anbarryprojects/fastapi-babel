@@ -34,6 +34,8 @@ class InternationalizationMiddleware(BaseHTTPMiddleware):
                 Returns:
                     str: The language that should be used.
                 """
+        if not lang_code:
+            return self.babel.config.BABEL_DEFAULT_LOCALE
         languages = re.findall(r"([a-z]{2}-[A-Z]{2}|[a-z]{2})(;q=\d.\d{1,3})?", lang_code)
         languages = sorted(languages, key=lambda x: x[1], reverse=True) # sort the priority, no priority comes last
         translation_directory = Path(self.babel.config.BABEL_TRANSLATION_DIRECTORY)
@@ -48,7 +50,7 @@ class InternationalizationMiddleware(BaseHTTPMiddleware):
                     explicit_priority = lang[0]
 
         # Return language with explicit priority or default value
-        return explicit_priority if explicit_priority else self.babel.config.BABEL_TRANSLATION_DIRECTORY
+        return explicit_priority if explicit_priority else self.babel.config.BABEL_DEFAULT_LOCALE
 
     async def dispatch(
             self, request: Request, call_next: RequestResponseEndpoint
