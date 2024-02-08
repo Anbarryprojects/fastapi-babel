@@ -10,6 +10,7 @@ from pathlib import Path
 if TYPE_CHECKING:
     from .core import Babel
 
+LANGUAGES_PATTERN = re.compile(r"([a-z]{2})-?([A-Z]{2})?(;q=\d.\d{1,3})?")
 
 class InternationalizationMiddleware(BaseHTTPMiddleware):
     def __init__(
@@ -36,18 +37,21 @@ class InternationalizationMiddleware(BaseHTTPMiddleware):
                 """
         if not lang_code:
             return self.babel.config.BABEL_DEFAULT_LOCALE
-        languages = re.findall(r"([a-z]{2}-[A-Z]{2}|[a-z]{2})(;q=\d.\d{1,3})?", lang_code)
+
+        matches = re.finditer(LANGUAGES_PATTERN, lang_code)
+        languages = [(f"{m.group(1)}{ f'_{m.group(2)}' if m.group(2) else ''}", m.group(3) or "") for m in matches]
         languages = sorted(languages, key=lambda x: x[1], reverse=True) # sort the priority, no priority comes last
         translation_directory = Path(self.babel.config.BABEL_TRANSLATION_DIRECTORY)
         translation_files = [i.name for i in translation_directory.iterdir()]
         explicit_priority = None
 
-        for lang in languages:
-            if lang[0] in translation_files:
-                if not lang[1]:  # languages without quality value having the highest priority 1
-                    return lang[0]
+        for lang, quality in languages:
+            if lang in translation_files:
+                if not quality:  # languages without quality value having the highest priority 1
+                    return lang
+
                 elif not explicit_priority:  # set language with explicit priority <= priority 1
-                    explicit_priority = lang[0]
+                    explicit_priority = lang
 
         # Return language with explicit priority or default value
         return explicit_priority if explicit_priority else self.babel.config.BABEL_DEFAULT_LOCALE
