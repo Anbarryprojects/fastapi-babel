@@ -1,18 +1,18 @@
-# Persian translations for PROJECT.
-# Copyright (C) 2022 ORGANIZATION
+# French translations for PROJECT.
+# Copyright (C) 2024 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2024-02-08 13:35+0330\n"
-"PO-Revision-Date: 2022-05-22 19:09+0430\n"
+"PO-Revision-Date: 2024-02-08 13:44+0330\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language: fa\n"
-"Language-Team: fa <LL@li.org>\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"Language: fr\n"
+"Language-Team: fr <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -20,5 +20,5 @@ msgstr ""
 
 #: main.py:6 main.py:9 main.py:12 main.py:15
 msgid "Hello World"
-msgstr "سلام دنیا"
+msgstr "Bonjour le monde"
 
