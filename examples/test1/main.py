@@ -1,16 +1,16 @@
-from babel_config import _ 
-from babel_config import babel
+from _babel import _ 
+from _babel import babel
  
 if __name__ == "__main__":
     babel.locale = "en"
-    en_text = _("Hello World")
+    en_text = _("File not found. There is nothing here")
     print(en_text)
     babel.locale = "fa"
-    fa_text = _("Hello World")
+    fa_text = _("File not found. There is nothing here")
     print(fa_text)
     babel.locale = "fr"
-    fr_text = _("Hello World")
+    fr_text = _("File not found. There is nothing here")
     print(fr_text)
     babel.locale = "es"
-    es_text = _("Hello World")
+    es_text = _("File not found. There is nothing here")
     print(es_text)
