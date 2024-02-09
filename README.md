@@ -8,7 +8,7 @@
 # FastAPI BABEL
 ### Get [pybabbel](https://github.com/python-babel/babel) tools directly within your FastAPI project without hassle.
 
-FastAPI Babel is will be integrated within FastAPI framework and gives you support of i18n, l10n, date and time locales and all other pybabel functionalities.
+FastAPI Babel is integrated within FastAPI framework and gives you support of i18n, l10n, date and time locales and all other pybabel functionalities.
 
 ## Features:
 - **I18n** (Internationalization)
@@ -40,8 +40,7 @@ and
 2. make `babel.py` file:
 
 ```python
-from fastapi_babel import Babel
-from fastapi_babel import BabelConfigs
+from fastapi_babel import Babel, BabelConfigs
 
 configs = BabelConfigs(
     ROOT_DIR=__file__,
@@ -64,9 +63,7 @@ if __name__ == "__main__":
 4. Create main.py file:
 
 ```python
-from fastapi_babel import Babel
-from fastapi_babel import BabelConfigs
-from fastapi_babel import _
+from fastapi_babel import Babel, BabelConfigs, _
 
 configs = BabelConfigs(
     ROOT_DIR=__file__,
@@ -88,11 +85,11 @@ if __name__ == "__main__":
     main()
 ```
 
-5. Extract the massage <a name="step5"></a>
+5. Extract the message <a name="step5"></a>
 
 `pybabel extract -F babel.cfg -o messages.pot .`
 
-6. Initialize pybabble
+6. Initialize pybabel
 
 `pybabel init -i messages.pot -d lang -l fa`
 
@@ -105,8 +102,6 @@ if __name__ == "__main__":
 9. Run `main.py`
 
 `python3 main.py`
-
-10. Enjoy
 
 - ### FastAPI Babel Commands
 Install click at first:
@@ -124,7 +119,7 @@ babel.run_cli()
 For more information just take a look at help flag of `main.py`
 `python main.py --help`
 
-#### Why FastAPI Babel CLI is recommanded ?
+#### Why FastAPI Babel CLI is recommended ?
 FastAPI Babel CLI will eliminate the need of concering the directories and paths, so you can concentrate on the project and spend less time on going forward and backward. You only need to specify **domain name**, **babel.cfg** and** localization directory **.
 
 **NOTICE:** Do **not** use `FastAPI Babbel` beside fastapi runner files (`main.py` or `run.py`), as uvicorn cli will not work.
@@ -137,32 +132,31 @@ FastAPI Babel CLI will eliminate the need of concering the directories and paths
 - create file `babel.py` and write the code below.
 
 ```python
-from fastapi_babel import Babel
-from fastapi_babel import BabelConfigs
+from fastapi_babel import Babel, BabelConfigs, BabelMiddleware 
 
 configs = BabelConfigs(
     ROOT_DIR=__file__,
     BABEL_DEFAULT_LOCALE="en",
     BABEL_TRANSLATION_DIRECTORY="lang",
 )
-babel = Babel(configs=configs)
+app.add_middleware(BabelMiddleware, babel_configs=configs)
 
 if __name__ == "__main__":
-    babel.run_cli()
+    Babel(configs).run_cli()
 ```
 1. Extract messages with following command
 
 `python3 babel.py extract -d/--dir {watch_dir}`
 
-**Notice: ** watch_dir is your project root directory, or where you want to extract the messages into that directory.
+**Notice: ** watch_dir is your project root directory, where the messages will be extracted.
 
-2. add your own langauge locale directory, for instance `fa`.
+2. Add your own language locale directory, for instance `fa`.
 
 `python3 babel.py init -l fa`
 
-3. go to ./lang/Fa/.po and add your translations.
+3. Go to ./lang/Fa/.po and add your translations.
 
-4. compile all locale directorties.
+4. compile all locale directories.
 `python3 babel.py compile`
 
 ```python
@@ -171,7 +165,11 @@ from fastapi_babel import _
 from .babel import babel
 
 app = FastAPI()
-babel.init_app(app)
+app.add_middleware(BabelMiddleware, babel_configs=BabelConfigs(
+    ROOT_DIR=__file__,
+    BABEL_DEFAULT_LOCALE="en",
+    BABEL_TRANSLATION_DIRECTORY="lang",
+))
 
 @app.get("/items/{id}", response_class=HTMLResponse)
 async def read_item(request: Request, id: str):
@@ -201,26 +199,20 @@ extensions=jinja2.ext.autoescape,jinja2.ext.with_
 *main.py*
 
 ```python
-from fastapi import FastAPI, Request
-
-from fastapi_babel import Babel
-from fastapi_babel import BabelConfigs
-from fastapi_babel import _
-
+from fastapi_babel import Babel, BabelConfigs, BabelMiddleware, _
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-
-templates = Jinja2Templates(directory="templates")
-configs = BabelConfigs(
-    ROOT_DIR=__file__,
-    BABEL_DEFAULT_LOCALE="en",
-    BABEL_TRANSLATION_DIRECTORY="lang",
-)
+from fastapi import FastAPI, Request
 
 app = FastAPI()
-babel = Babel(app, configs=configs)
-babel.install_jinja(templates)
+babel_configs = BabelConfigs(
+        ROOT_DIR=__file__,
+        BABEL_DEFAULT_LOCALE="en",
+        BABEL_TRANSLATION_DIRECTORY="lang",
+)
+templates = Jinja2Templates(directory="templates")
+app.add_middleware(BabelMiddleware, babel_configs=babel_configs, jinja2_templates=templates)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/items/{id}", response_class=HTMLResponse)

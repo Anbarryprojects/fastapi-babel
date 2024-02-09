@@ -4,20 +4,20 @@ from gettext import gettext, translation
 from subprocess import run
 from typing import Callable, Optional
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, Depends
 from fastapi.templating import Jinja2Templates
 
 from .helpers import check_click_import, check_jinja_import
-from .middleware import InternationalizationMiddleware as Middleware
 from .properties import RootConfigs
 from .exceptions import BabelProxyError
+from contextvars import ContextVar
 
 
 class Babel:
 
-    instance: Optional[Babel] = None
+    instance: Optional[Babel] = None  # Singleton used by Babel CLI
 
-    def __init__(self, app: Optional[FastAPI] = None, *, configs: RootConfigs) -> None:
+    def __init__(self, configs: RootConfigs) -> None:
         """
         `Babel` is manager for babel localization
             and i18n tools like gettext, translation, ...
@@ -25,17 +25,18 @@ class Babel:
         Args:
             configs (RootConfigs): Babel configs for using.
         """
-        Babel.instance = self
         self.config: RootConfigs = configs
         self.__locale: str = self.config.BABEL_DEFAULT_LOCALE
-        self.__d_locale: str = self.config.BABEL_DEFAULT_LOCALE
+        self.__default_locale: str = self.config.BABEL_DEFAULT_LOCALE
         self.__domain: str = self.config.BABEL_DOMAIN.split(".")[0]
-        if isinstance(app, FastAPI):
-            self.init_app(app)
 
     @property
     def domain(self) -> str:
         return self.__domain
+
+    @property
+    def default_locale(self) -> str:
+        return self.__default_locale
 
     @property
     def locale(self) -> str:
@@ -47,7 +48,7 @@ class Babel:
 
     @property
     def gettext(self) -> Callable[[str], str]:
-        if self.__d_locale != self.locale:
+        if self.default_locale != self.locale:
             gt = translation(
                 self.domain,
                 self.config.BABEL_TRANSLATION_DIRECTORY,
@@ -56,14 +57,6 @@ class Babel:
             gt.install()
             return gt.gettext
         return gettext
-
-    def init_app(self, app: FastAPI) -> None:
-        """`Babel.init_app` is a helper function for using babel in FastAPI application.
-
-        Args:
-            app (FastAPI): FastAPI application object.
-        """
-        app.add_middleware(Middleware, babel=self)
 
     def install_jinja(self, templates: Jinja2Templates) -> None:
         """
@@ -99,7 +92,7 @@ class __LazyText:
         return _(self.message)
 
 
-def make_gettext(message: str) -> str:
+def make_gettext(request: Request = Depends()) -> Callable[[str], str]:
     """translate the message and retrieve message from .PO and .MO depends on
     `Babel.locale` locale.
 
@@ -109,26 +102,40 @@ def make_gettext(message: str) -> str:
     Returns:
         str: transalted message.
     """
-    if Babel.instance is None:
-        raise BabelProxyError()
-    return Babel.instance.gettext(message)
+
+    def translate(message: str) -> str:
+        # Get Babel instance from request or fallback to the CLI instance (when defined)
+        babel = getattr(request.state, 'babel', Babel.instance)
+        if babel is None:
+            raise BabelProxyError("Babel instance is not available in the current request context.")
+
+        return babel.gettext(message)
+
+    return translate
 
 
-_: Callable[[str], str] = make_gettext
+
+_context_var: ContextVar[Callable[[str], str]] = ContextVar("gettext")
+
+
+def _(message: str) -> str:
+    gettext = _context_var.get()
+    return gettext(message)
+
 lazy_gettext = __LazyText
 
 
 class BabelCli:
     __module_name__ = "pybabel"
 
-    def __init__(self, babel_instance: Babel) -> None:
+    def __init__(self, babel: Babel) -> None:
         """Babel cli manager to facilitate using pybabel commands by specified congigs
         fron `BabelConfigs`.
 
         Args:
-            babel_instance (Babel): `Babel` instance
+            babel (Babel): `Babel` instance
         """
-        self.babel: Babel = babel_instance
+        Babel.instance: Babel = babel
 
     def extract(self, watch_dir: str) -> None:
         """extract all messages that annotated using gettext/_
@@ -145,9 +152,9 @@ class BabelCli:
                 BabelCli.__module_name__,
                 "extract",
                 "-F",
-                self.babel.config.BABEL_CONFIG_FILE,
+                Babel.instance.config.BABEL_CONFIG_FILE,
                 "-o",
-                self.babel.config.BABEL_MESSAGE_POT_FILE,
+                Babel.instance.config.BABEL_MESSAGE_POT_FILE,
                 watch_dir,
             ]
         )
@@ -166,11 +173,11 @@ class BabelCli:
                 BabelCli.__module_name__,
                 "init",
                 "-i",
-                self.babel.config.BABEL_MESSAGE_POT_FILE,
+                Babel.instance.config.BABEL_MESSAGE_POT_FILE,
                 "-d",
-                self.babel.config.BABEL_TRANSLATION_DIRECTORY,
+                Babel.instance.config.BABEL_TRANSLATION_DIRECTORY,
                 "-l",
-                lang or self.babel.config.BABEL_DEFAULT_LOCALE,
+                lang or Babel.instance.config.BABEL_DEFAULT_LOCALE,
             ]
         )
 
@@ -186,9 +193,9 @@ class BabelCli:
                 BabelCli.__module_name__,
                 "update",
                 "-i",
-                self.babel.config.BABEL_MESSAGE_POT_FILE,
+                Babel.instance.config.BABEL_MESSAGE_POT_FILE,
                 "-d",
-                watch_dir or self.babel.config.BABEL_TRANSLATION_DIRECTORY,
+                watch_dir or Babel.instance.config.BABEL_TRANSLATION_DIRECTORY,
             ]
         )
 
@@ -202,7 +209,7 @@ class BabelCli:
                 BabelCli.__module_name__,
                 "compile",
                 "-d",
-                self.babel.config.BABEL_TRANSLATION_DIRECTORY,
+                Babel.instance.config.BABEL_TRANSLATION_DIRECTORY,
             ]
         )
 
