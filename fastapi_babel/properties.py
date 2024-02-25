@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 @dataclass
 class RootConfigs:
 
-    ROOT_DIR: str
+    ROOT_DIR: str | pathlib.Path
     BABEL_DEFAULT_LOCALE: str
     BABEL_TRANSLATION_DIRECTORY: str
     BABEL_DOMAIN: str = "messages.pot"

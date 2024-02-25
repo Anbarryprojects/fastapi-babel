@@ -1,6 +1,6 @@
-from _babel import _ 
-from _babel import babel
- 
+from i18n import _
+from i18n import babel
+
 if __name__ == "__main__":
     babel.locale = "en"
     en_text = _("File not found. There is nothing here")

@@ -105,14 +105,15 @@ def make_gettext(request: Request = Depends()) -> Callable[[str], str]:
 
     def translate(message: str) -> str:
         # Get Babel instance from request or fallback to the CLI instance (when defined)
-        babel = getattr(request.state, 'babel', Babel.instance)
+        babel = getattr(request.state, "babel", Babel.instance)
         if babel is None:
-            raise BabelProxyError("Babel instance is not available in the current request context.")
+            raise BabelProxyError(
+                "Babel instance is not available in the current request context."
+            )
 
         return babel.gettext(message)
 
     return translate
-
 
 
 _context_var: ContextVar[Callable[[str], str]] = ContextVar("gettext")
@@ -121,6 +122,7 @@ _context_var: ContextVar[Callable[[str], str]] = ContextVar("gettext")
 def _(message: str) -> str:
     gettext = _context_var.get()
     return gettext(message)
+
 
 lazy_gettext = __LazyText
 
@@ -135,7 +137,7 @@ class BabelCli:
         Args:
             babel (Babel): `Babel` instance
         """
-        Babel.instance: Babel = babel
+        self.babel = babel
 
     def extract(self, watch_dir: str) -> None:
         """extract all messages that annotated using gettext/_
@@ -152,9 +154,9 @@ class BabelCli:
                 BabelCli.__module_name__,
                 "extract",
                 "-F",
-                Babel.instance.config.BABEL_CONFIG_FILE,
+                self.babel.config.BABEL_CONFIG_FILE,
                 "-o",
-                Babel.instance.config.BABEL_MESSAGE_POT_FILE,
+                self.babel.config.BABEL_MESSAGE_POT_FILE,
                 watch_dir,
             ]
         )
@@ -173,11 +175,11 @@ class BabelCli:
                 BabelCli.__module_name__,
                 "init",
                 "-i",
-                Babel.instance.config.BABEL_MESSAGE_POT_FILE,
+                self.babel.config.BABEL_MESSAGE_POT_FILE,
                 "-d",
-                Babel.instance.config.BABEL_TRANSLATION_DIRECTORY,
+                self.babel.config.BABEL_TRANSLATION_DIRECTORY,
                 "-l",
-                lang or Babel.instance.config.BABEL_DEFAULT_LOCALE,
+                lang or self.babel.config.BABEL_DEFAULT_LOCALE,
             ]
         )
 
@@ -193,9 +195,9 @@ class BabelCli:
                 BabelCli.__module_name__,
                 "update",
                 "-i",
-                Babel.instance.config.BABEL_MESSAGE_POT_FILE,
+                self.babel.config.BABEL_MESSAGE_POT_FILE,
                 "-d",
-                watch_dir or Babel.instance.config.BABEL_TRANSLATION_DIRECTORY,
+                watch_dir or self.babel.config.BABEL_TRANSLATION_DIRECTORY,
             ]
         )
 
@@ -209,7 +211,7 @@ class BabelCli:
                 BabelCli.__module_name__,
                 "compile",
                 "-d",
-                Babel.instance.config.BABEL_TRANSLATION_DIRECTORY,
+                self.babel.config.BABEL_TRANSLATION_DIRECTORY,
             ]
         )
 
