@@ -119,10 +119,12 @@ babel.run_cli()
 For more information just take a look at help flag of `main.py`
 `python main.py --help`
 
-#### Why FastAPI Babel CLI is recommended ?
-FastAPI Babel CLI will eliminate the need of concering the directories and paths, so you can concentrate on the project and spend less time on going forward and backward. You only need to specify **domain name**, **babel.cfg** and** localization directory **.
 
-**NOTICE:** Do **not** use `FastAPI Babbel` beside fastapi runner files (`main.py` or `run.py`), as uvicorn cli will not work.
+#### Why FastAPI Babel CLI is recommanded ?
+FastAPI Babel CLI will eliminate the need of concering the directories and paths, so you can concentrate on the project and spend less time on going forward and backward. You only need to specify **domain name**, **babel.cfg** and **localization directory**.
+
+
+**NOTICE:** Do **not** use `FastAPI Babel` beside fastapi runner files (`main.py` or `run.py`), as uvicorn cli will not work.
 
 
 [========]
@@ -144,9 +146,10 @@ app.add_middleware(BabelMiddleware, babel_configs=configs)
 if __name__ == "__main__":
     Babel(configs).run_cli()
 ```
-1. Extract messages with following command
+1. extract messages with following command
 
 `python3 babel.py extract -d/--dir {watch_dir}`
+
 
 **Notice: ** watch_dir is your project root directory, where the messages will be extracted.
 
@@ -177,7 +180,7 @@ async def read_item(request: Request, id: str):
 
 ```
 
-5. Now you can control your translation langauge from header of request and locale code. The parameter is `Accept-Laguage`.
+5. Now you can control your translation language from the request header and the locale code. The parameter is `Accept-Language`.
 
 Screenshot:
 [![Screenshot 1](https://user-images.githubusercontent.com/56755478/169701538-8f893d0e-fd09-4004-8e8d-5e045a1d588a.png "Screenshot 1")](https://user-images.githubusercontent.com/56755478/169701538-8f893d0e-fd09-4004-8e8d-5e045a1d588a.png "Screenshot 1")
