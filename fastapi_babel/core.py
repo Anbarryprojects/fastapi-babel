@@ -92,7 +92,7 @@ class __LazyText:
         return _(self.message)
 
 
-def make_gettext(request: Request = Depends()) -> Callable[[str], str]:
+def make_gettext(request: Request) -> Callable[[str], str]:
     """translate the message and retrieve message from .PO and .MO depends on
     `Babel.locale` locale.
 
