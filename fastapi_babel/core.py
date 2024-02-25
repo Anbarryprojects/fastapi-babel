@@ -4,7 +4,7 @@ from gettext import gettext, translation
 from subprocess import run
 from typing import Callable, Optional
 
-from fastapi import FastAPI, Request, Depends
+from fastapi import Request
 from fastapi.templating import Jinja2Templates
 
 from .helpers import check_click_import, check_jinja_import
@@ -92,7 +92,7 @@ class __LazyText:
         return _(self.message)
 
 
-def make_gettext(request: Request = Depends()) -> Callable[[str], str]:
+def make_gettext(request: Request) -> Callable[[str], str]:
     """translate the message and retrieve message from .PO and .MO depends on
     `Babel.locale` locale.
 
