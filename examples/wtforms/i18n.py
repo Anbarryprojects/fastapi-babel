@@ -13,5 +13,5 @@ babel = Babel(
 )
 
 if __name__ == "__main__":
-    babel_cli = BabelCli(babel_instance=babel)
+    babel_cli = BabelCli(babel)
     babel_cli.run()

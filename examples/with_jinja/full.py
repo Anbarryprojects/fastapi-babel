@@ -6,16 +6,15 @@ from fastapi.templating import Jinja2Templates
 from fastapi_babel import _  # noqa
 from fastapi_babel import Babel, BabelConfigs
 
-templates = Jinja2Templates(directory="templates")
-configs = BabelConfigs(
-    ROOT_DIR=__file__,
-    BABEL_DEFAULT_LOCALE="en",
-    BABEL_TRANSLATION_DIRECTORY="lang",
-)
 
 app = FastAPI()
-babel = Babel(app, configs=configs)
-babel.install_jinja(templates)
+babel_configs = BabelConfigs(
+        ROOT_DIR=__file__,
+        BABEL_DEFAULT_LOCALE="en",
+        BABEL_TRANSLATION_DIRECTORY="lang",
+)
+templates = Jinja2Templates(directory="templates")
+app.add_middleware(BabelMiddleware, babel_configs=babel_configs, jinja2_templates=templates)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
@@ -25,4 +24,4 @@ async def read_item(request: Request, id: str):
 
 
 if __name__ == "__main__":
-    babel.run_cli()
+    Babel(configs=babel_configs).run_cli()
