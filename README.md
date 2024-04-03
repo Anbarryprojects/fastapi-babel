@@ -193,7 +193,6 @@ Screenshot:
 ```xml
 [python: **.py]
 [jinja2: **/templates/**.html]
-extensions=jinja2.ext.autoescape,jinja2.ext.with_
 ```
 
 2. Here is how your `main.py` should look like.
