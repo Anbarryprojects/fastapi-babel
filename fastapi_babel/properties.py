@@ -1,12 +1,13 @@
 import os
 import pathlib
+import typing
 from dataclasses import dataclass, field
 
 
 @dataclass
 class RootConfigs:
 
-    ROOT_DIR: str | pathlib.Path
+    ROOT_DIR: typing.Union[str, pathlib.Path]
     BABEL_DEFAULT_LOCALE: str
     BABEL_TRANSLATION_DIRECTORY: str
     BABEL_DOMAIN: str = "messages.pot"
