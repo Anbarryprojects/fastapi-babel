@@ -5,7 +5,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.middleware.base import RequestResponseEndpoint
 from starlette.middleware.base import DispatchFunction
 from starlette.types import ASGIApp
-from typing import Optional
+from typing import Optional, Callable
 from .core import Babel, _context_var
 from .properties import RootConfigs
 from pathlib import Path
@@ -19,12 +19,17 @@ class BabelMiddleware(BaseHTTPMiddleware):
         self,
         app: ASGIApp,
         babel_configs: RootConfigs,
+        locale_selector: Optional[Callable[[Request], Optional[str]]] = None,
         jinja2_templates: Optional[Jinja2Templates] = None,
         dispatch: Optional[DispatchFunction] = None,
     ) -> None:
         super().__init__(app, dispatch)
         self.babel_configs = babel_configs
         self.jinja2_templates = jinja2_templates
+        self.locale_selector = locale_selector or self._default_locale_selector
+
+    def _default_locale_selector(self, request: Request):
+        return request.headers.get("Accept-Language", None)
 
     def get_language(self, babel: Babel, lang_code):
         """Applies an available language.
@@ -86,7 +91,7 @@ class BabelMiddleware(BaseHTTPMiddleware):
         Returns:
             Response: ...
         """
-        lang_code: Optional[str] = request.headers.get("Accept-Language", None)
+        lang_code: Optional[str] = self.locale_selector(request)
 
         # Create a new Babel instance per request
         request.state.babel = Babel(configs=self.babel_configs)
