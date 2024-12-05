@@ -163,27 +163,33 @@ if __name__ == "__main__":
 `python3 babel.py compile`
 
 ```python
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
+
+
 from fastapi_babel import _
-from .babel import babel
+from fastapi_babel import Babel, BabelConfigs
+from fastapi_babel import BabelMiddleware
 
 app = FastAPI()
-app.add_middleware(BabelMiddleware, babel_configs=BabelConfigs(
+babel_configs = BabelConfigs(
     ROOT_DIR=__file__,
     BABEL_DEFAULT_LOCALE="en",
     BABEL_TRANSLATION_DIRECTORY="lang",
-))
+)
+app.add_middleware(BabelMiddleware, babel_configs=babel_configs)
 
-@app.get("/items/{id}", response_class=HTMLResponse)
-async def read_item(request: Request, id: str):
-    return id + _("Hello World")
+
+@app.get("/")
+async def index():
+    return {"text": _("Hello World")}
+
+
+if __name__ == "__main__":
+    Babel(configs=babel_configs).run_cli()
 
 ```
 
 5. Now you can control your translation language from the request header and the locale code. The parameter is `Accept-Language`.
-
-Screenshot:
-[![Screenshot 1](https://user-images.githubusercontent.com/56755478/169701538-8f893d0e-fd09-4004-8e8d-5e045a1d588a.png "Screenshot 1")](https://user-images.githubusercontent.com/56755478/169701538-8f893d0e-fd09-4004-8e8d-5e045a1d588a.png "Screenshot 1")
 
 ### How to use Jinja In FastAPI Babel
 
@@ -202,25 +208,42 @@ extensions=jinja2.ext.autoescape,jinja2.ext.with_
 *main.py*
 
 ```python
-from fastapi_babel import Babel, BabelConfigs, BabelMiddleware, _
+from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi import FastAPI, Request
+
+
+from fastapi_babel import _
+from fastapi_babel import Babel, BabelConfigs
+from fastapi_babel import BabelMiddleware
 
 app = FastAPI()
 babel_configs = BabelConfigs(
-        ROOT_DIR=__file__,
-        BABEL_DEFAULT_LOCALE="en",
-        BABEL_TRANSLATION_DIRECTORY="lang",
+    ROOT_DIR=__file__,
+    BABEL_DEFAULT_LOCALE="en",
+    BABEL_TRANSLATION_DIRECTORY="lang",
 )
 templates = Jinja2Templates(directory="templates")
-app.add_middleware(BabelMiddleware, babel_configs=babel_configs, jinja2_templates=templates)
+app.add_middleware(
+    BabelMiddleware, babel_configs=babel_configs, jinja2_templates=templates
+)
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+
+@app.get("/")
+async def index():
+    return {"text": _("Hello World")}
+
 
 @app.get("/items/{id}", response_class=HTMLResponse)
 async def read_item(request: Request, id: str):
     return templates.TemplateResponse("item.html", {"request": request, "id": id})
+
+
+if __name__ == "__main__":
+    Babel(configs=babel_configs).run_cli()
+
 ```
 3. Here is sample `index.html` file
 
@@ -244,6 +267,45 @@ async def read_item(request: Request, id: str):
 4. Now just follow the documentation from [step 5](#step5).
 
 5. More features like lazy gettext, please check the [Wtform Example](https://github.com/Anbarryprojects/fastapi-babel/tree/main/examples/wtforms)
+
+### How to use multithread mode for fastapi babel:
+
+```python
+
+import threading
+from time import sleep
+from typing import Annotated
+
+from pydantic import BaseModel
+from i18n import _
+from i18n import babel_configs
+from fastapi import Depends, FastAPI
+from fastapi_babel import BabelMiddleware, Babel
+from fastapi_babel.local_context import BabelContext
+from fastapi_babel import use_babel
+
+app = FastAPI()
+app.add_middleware(BabelMiddleware, babel_configs=babel_configs)
+
+
+class ResponseModel(BaseModel):
+    idx: int
+    text: str
+
+
+def translate_after(idx, babel: Babel):
+    with BabelContext(babel_configs, babel=babel):
+        print(_("Hello world"), babel.locale, idx)
+
+
+@app.get("/", response_model=ResponseModel)
+async def index(idx: int, babel: Annotated[Babel, Depends(use_babel)]):
+    t = threading.Thread(target=translate_after, args=[idx, babel])
+    t.start()
+    return ResponseModel(idx=idx, text=_("Hello world"))
+
+
+```
 
 ## Authors
 
