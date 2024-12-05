@@ -5,7 +5,7 @@ from .local_context import BabelContext
 from .middleware import BabelMiddleware
 from .properties import RootConfigs as BabelConfigs
 
-__version__ = "0.1.0"
+__version__ = "1.0.0"
 __author__ = "papuridalego@gmail.com"
 __all__ = [
     "Babel",

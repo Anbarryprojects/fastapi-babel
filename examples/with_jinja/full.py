@@ -1,14 +1,12 @@
-from contextvars import ContextVar
-from typing import Annotated, Callable
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 
-from fastapi_babel import _  # noqa
-from fastapi_babel import Babel, BabelConfigs, BabelMiddleware
-
+from fastapi_babel import _
+from fastapi_babel import Babel, BabelConfigs
+from fastapi_babel import BabelMiddleware
 
 app = FastAPI()
 babel_configs = BabelConfigs(
