@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 from gettext import gettext, translation
+from logging import Logger
 from subprocess import run
 from typing import Callable, Optional
+import typing
 
 from fastapi import Request
 from fastapi.templating import Jinja2Templates
@@ -93,17 +95,16 @@ class __LazyText:
 
 
 def make_gettext(request: Request) -> Callable[[str], str]:
-    """translate the message and retrieve message from .PO and .MO depends on
-    `Babel.locale` locale.
-
-    Args:
-        message (str): message content
-
-    Returns:
-        str: transalted message.
-    """
-
     def translate(message: str) -> str:
+        """translate the message and retrieve message from .PO and .MO depends on
+        `Babel.locale` locale.
+
+        Args:
+            message (str): message content
+
+        Returns:
+            str: transalted message.
+        """
         # Get Babel instance from request or fallback to the CLI instance (when defined)
         babel = getattr(request.state, "babel", Babel.instance)
         if babel is None:
@@ -116,7 +117,63 @@ def make_gettext(request: Request) -> Callable[[str], str]:
     return translate
 
 
+def get_babel(request: Request) -> Babel:
+    """Get the babel object from request context in state of each income scope
+
+    Args:
+        request (Request): request object
+
+    Returns:
+        Babel: babel object
+    """
+
+    babel = getattr(request.state, "babel", Babel.instance)
+    if babel is None:
+        raise BabelProxyError(
+            "Babel instance is not available in the current request context."
+        )
+
+    return babel
+
+
 _context_var: ContextVar[Callable[[str], str]] = ContextVar("gettext")
+
+
+class BabelContext:
+    def __init__(
+        self,
+        babel_config: RootConfigs,
+        babel: typing.Optional[Babel] = None,
+        logger: typing.Optional[Logger] = None,
+    ) -> None:
+        """Babel context to insert object into `ContextVar`.
+
+        Args:
+            babel_config (RootConfigs): Base config object
+            logger (typing.Optional[Logger], optional): Logger object to log inside of context manager scope.
+            Defaults to None.
+        """
+        self.babel_config = babel_config
+        self.logger = logger
+        self.__babel = babel
+
+    def _log(self, error: Exception):
+        """default log method
+
+        Args:
+            error (Exception): raised error inside context manager scope.
+        """
+        self.logger.error(error, exc_info=True)
+
+    def __enter__(self):
+        babel = self.__babel or Babel(self.babel_config)
+        _context_var.set(babel.gettext)
+        return babel
+
+    def __exit__(self, exc_type, exc_value, exc_tb):
+        if self.logger:
+            self._log(exc_value)
+        return True
 
 
 def _(message: str) -> str:
