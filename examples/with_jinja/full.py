@@ -5,11 +5,9 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from fastapi import Depends
 
-# from fastapi_babel import _  # noqa
+from fastapi_babel import _  # noqa
 from fastapi_babel import Babel, BabelConfigs, BabelMiddleware
-from fastapi_babel.core import make_gettext
 
 
 app = FastAPI()
@@ -26,7 +24,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 @app.get("/")
-async def index(_: Annotated[Callable[[str], str], Depends(make_gettext)]):
+async def index():
     return {"text": _("Hello World")}
 
 

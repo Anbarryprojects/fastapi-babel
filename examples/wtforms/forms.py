@@ -1,5 +1,5 @@
 from i18n import _
-from fastapi_babel.core import lazy_gettext as _
+from fastapi_babel import lazy_gettext as _
 from wtforms import Form, StringField, validators as v
 from wtforms import SubmitField
 
