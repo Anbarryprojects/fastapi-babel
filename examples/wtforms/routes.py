@@ -1,15 +1,21 @@
-from fastapi import APIRouter
+from typing import Annotated
+from fastapi import APIRouter, Depends
 from fastapi import Request
-from i18n import babel, _
 from app import Application as root
+from fastapi_babel.core import Babel
+from fastapi_babel.helpers import use_babel
+from fastapi_babel.local_context import BabelContext
 from forms import RegistrationForm
+from i18n import babel_config
 
 router: APIRouter = APIRouter(prefix="")
 render = root.templates.TemplateResponse
 
 
 @router.get("/")
-async def read_item(request: Request):
+async def read_item(request: Request, babel: Annotated[Babel, Depends(use_babel)]):
+    babel.locale = "fa"
+    # with BabelContext(babel_config, babel=babel):
     form = RegistrationForm()
     return render("index.html", {"request": request, "form": form})
 
