@@ -2,15 +2,14 @@
   <img src="https://user-images.githubusercontent.com/56755478/165474515-12392df4-a41c-4ed9-bed4-512f606caedc.png" />
 </p>
 
-
-
-
 # FastAPI BABEL
-### Get [pybabbel](https://github.com/python-babel/babel) tools directly within your FastAPI project without hassle.
+
+### Get [pybabbel](https://github.com/python-babel/babel) tools directly within your FastAPI project without hassle
 
 FastAPI Babel is integrated within FastAPI framework and gives you support of i18n, l10n, date and time locales, and all other pybabel functionalities.
 
-## Features:
+## Features
+
 - **I18n** (Internationalization)
 - **Wtform Translation** (Lazy Text)
 - **l10n** (Localization)
@@ -20,11 +19,13 @@ FastAPI Babel is integrated within FastAPI framework and gives you support of i1
 - locale selector from **HTTP header**
 
 ## Support
+
 **Python:** 3.6 and later (tested on Python 3.6, 3.12)
 **FastAPI**: 0.45.0 +
 **PyBabel**: All
 
 ## Installation
+
     pip install fastapi-babel
 
 # How to use
@@ -55,10 +56,9 @@ if __name__ == "__main__":
 
 3. make `babel.cfg` file
 
-*babel.cfg*
+_babel.cfg_
 
     [python: **.py]
-
 
 4. Create main.py file:
 
@@ -93,9 +93,9 @@ if __name__ == "__main__":
 
 `pybabel init -i messages.pot -d lang -l fa`
 
-7. Goto *lang/**YOUR_LANGUAGE_CODE**/LC_MESSAGES/messages.po* and **add your translation** to your messages.
+7. Goto _lang/**YOUR_LANGUAGE_CODE**/LC_MESSAGES/messages.po_ and **add your translation** to your messages.
 
-8. Go back to the root folder and   Compile
+8. Go back to the root folder and Compile
 
 `pybabel compile -d lang`
 
@@ -104,8 +104,9 @@ if __name__ == "__main__":
 `python3 main.py`
 
 - ### FastAPI Babel Commands
-Install click at first:
-`pip install click`
+
+  Install click at first:
+  `pip install click`
 
 1. Add this snippet to your FasAPI code:
 
@@ -114,18 +115,17 @@ Install click at first:
 babel.run_cli()
 ...
 ```
+
 2. Now just follow the documentation from [step 5](#step5).
 
 For more information just take a look at help flag of `main.py`
 `python main.py --help`
 
-
 #### Why FastAPI Babel CLI is recommanded ?
+
 FastAPI Babel CLI will eliminate the need of concering the directories and paths, so you can concentrate on the project and spend less time on going forward and backward. You only need to specify **domain name**, **babel.cfg** and **localization directory**.
 
-
 **NOTICE:** Do **not** use `FastAPI Babel` beside fastapi runner files (`main.py` or `run.py`), as uvicorn cli will not work.
-
 
 [========]
 
@@ -134,7 +134,7 @@ FastAPI Babel CLI will eliminate the need of concering the directories and paths
 - create file `babel.py` and write the code below.
 
 ```python
-from fastapi_babel import Babel, BabelConfigs, BabelMiddleware 
+from fastapi_babel import Babel, BabelConfigs, BabelMiddleware
 
 configs = BabelConfigs(
     ROOT_DIR=__file__,
@@ -146,12 +146,12 @@ app.add_middleware(BabelMiddleware, babel_configs=configs)
 if __name__ == "__main__":
     Babel(configs).run_cli()
 ```
+
 1. extract messages with following command
 
 `python3 babel.py extract -d/--dir {watch_dir}`
 
-
-**Notice: ** watch_dir is your project root directory, where the messages will be extracted.
+**Notice:** watch_dir is your project root directory, where the messages will be extracted.
 
 2. Add your own language locale directory, for instance `fa`.
 
@@ -160,7 +160,7 @@ if __name__ == "__main__":
 3. Go to ./lang/Fa/.po and add your translations.
 
 4. compile all locale directories.
-`python3 babel.py compile`
+   `python3 babel.py compile`
 
 ```python
 from fastapi import FastAPI
@@ -193,19 +193,16 @@ if __name__ == "__main__":
 
 ### How to use Jinja In FastAPI Babel
 
-1. Add jinja extension to **babel.cfg**
-
+1. Add jinja to **babel.cfg**
 
 ```xml
 [python: **.py]
 [jinja2: **/templates/**.html]
-extensions=jinja2.ext.autoescape,jinja2.ext.with_
 ```
 
 2. Here is how your `main.py` should look like.
 
-
-*main.py*
+_main.py_
 
 ```python
 from fastapi import FastAPI, Request
@@ -213,10 +210,13 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-
 from fastapi_babel import _
 from fastapi_babel import Babel, BabelConfigs
 from fastapi_babel import BabelMiddleware
+
+def locale_selector(request: Request) -> str:
+    return request.cookies.get("locale") or "en" # Fallback to "en" if no cookie is set
+
 
 app = FastAPI()
 babel_configs = BabelConfigs(
@@ -224,10 +224,17 @@ babel_configs = BabelConfigs(
     BABEL_DEFAULT_LOCALE="en",
     BABEL_TRANSLATION_DIRECTORY="lang",
 )
+
 templates = Jinja2Templates(directory="templates")
+templates.env.globals.update(_=_)
+
 app.add_middleware(
-    BabelMiddleware, babel_configs=babel_configs, jinja2_templates=templates
+    BabelMiddleware,
+    babel_configs=babel_configs,
+    jinja2_templates=templates,
+    locale_selector=locale_selector,
 )
+
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
@@ -238,37 +245,63 @@ async def index():
 
 @app.get("/items/{id}", response_class=HTMLResponse)
 async def read_item(request: Request, id: str):
-    return templates.TemplateResponse("item.html", {"request": request, "id": id})
+    return templates.TemplateResponse("index.html", {"request": request, "id": id})
 
 
 if __name__ == "__main__":
     Babel(configs=babel_configs).run_cli()
 
 ```
+
 3. Here is sample `index.html` file
 
-*index.html*
+_index.html_
 
 ```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-</head>
-<body>
+  </head>
+  <body>
     <h1>{{_("Hello World")}}</h1>
-</body>
+  </body>
 </html>
-``` 
+```
+
+You can have then a language selector, like this:
+
+```html
+<div class="flex gap-1">
+  <a href="/set-locale/fa">{{ _("FA") }}</a>
+  <a href="/set-locale/en">{{ _("EN") }}</a>
+</div>
+```
+
+You only need to create a route to set the locale cookie, and import the route into your main.py if you have created it in a separate file.:
+
+```python
+from fastapi import APIRouter, Request
+from fastapi.responses import RedirectResponse
+
+router: APIRouter = APIRouter()
+
+@router.get("/set-locale/{lang}")
+async def set_locale(lang: str, request: Request):
+    referer = request.headers.get("referer") or "/"
+    response = RedirectResponse(url=referer)
+    response.set_cookie(key="locale", value=lang, max_age=60 * 60 * 24 * 30) # Cookie lasts for 30 days
+    return response
+```
 
 4. Now just follow the documentation from [step 5](#step5).
 
 5. More features like lazy gettext, please check the [Wtform Example](https://github.com/Anbarryprojects/fastapi-babel/tree/main/examples/wtforms)
 
-### How to use multithread mode for fastapi babel:
+### How to use multithread mode for fastapi babel
 
 ```python
 
@@ -311,7 +344,6 @@ async def index(idx: int, babel: Annotated[Babel, Depends(use_babel)]):
 
 - [@Parsa Pourmhammad](https://github.com/Legopapurida)
 
-
 ## Contributing
 
 Contributions are always welcome!
@@ -319,7 +351,6 @@ Contributions are always welcome!
 Please read `contributing.md` to get familiar how to get started.
 
 Please adhere to the project's `code of conduct`.
-
 
 ## Feedback And Support
 
